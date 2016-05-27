@@ -191,7 +191,7 @@ void GraphMatcher::getter(std::vector<CloudNode> target_graph,std::vector<CloudN
 	delete [] adj_target;
 }
 
-void GraphMatcher::search(std::vector<CloudNode> query_graph)
+void GraphMatcher::search(std::vector<CloudNode> query_graph,bool screenshot)
 {
 	std::cout<<"Searching for the subraph!"<<std::endl;
 		
@@ -295,6 +295,5 @@ void GraphMatcher::search(std::vector<CloudNode> query_graph)
 			std::cout<<"Target :"<<similars[i].first<<" with Query :"<<similars[i].second<<std::endl;
 		}
 		
-		//view(c);
-		viewer.view(target_graph,query_graph,similars);
+		viewer.view(target_graph,query_graph,similars,screenshot);
 }

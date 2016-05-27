@@ -45,13 +45,13 @@ int main(int argc,char**argv)
 	Segmentor s(cloud_target);
 
 
-	vector<CloudNode> model_objects=extractor.extract_objects(model_node);
+	vector<CloudNode> model_objects=extractor.extract_objects(model_node,1);
 	cout<<"Model objects!"<<endl;
 	viewer.view(model_objects);
 
 	vector<CloudNode> target_objects=extractor.extract_objects(s.get_current_outliers(),1);
 	cout<<"Target objects!"<<endl;
-	viewer.view(target_objects,true);
+	viewer.view(target_objects);
 
 	vector<vector<CloudNode> >model_graph;
 	vector<vector<CloudNode> >target_graph;
@@ -73,11 +73,11 @@ int main(int argc,char**argv)
 	gb.scene_graph_info();
 
 	cout<<"Targetter!"<<target_graph.size()<<endl;
-	viewer.view(target_graph[4]);
+	viewer.view(target_graph[4],true);
 
 
 	GraphMatcher matcher(model_graph);
-	matcher.search(target_graph[4]);
+	matcher.search(target_graph[4],true);
 
 	viewer.view_graph(target_graph[4]);
 

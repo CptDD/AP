@@ -25,6 +25,6 @@ public:
 		this->scene_graph=scene_graph;
 	};
 
-	void search(std::vector<CloudNode> query_graph);
+	void search(std::vector<CloudNode> query_graph,bool screenshot=false);
 };
 #endif
