@@ -1,0 +1,2 @@
+/usr/bin/ar cr libShapeFunc.a  CMakeFiles/ShapeFunc.dir/src/CloudNode.cpp.o
+/usr/bin/ranlib libShapeFunc.a
