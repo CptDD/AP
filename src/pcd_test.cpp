@@ -34,34 +34,6 @@ Eigen::Affine3f compute_transform_matrix_v2(Eigen::Vector3f u,Eigen::Vector3f v)
 int main(int argc,char**argv)
 {
 
-	Serializer serializer("Model");
-
-	vector<vector<CloudNode> >model_graph;
-
-	vector<CloudNode> loaded_model=serializer.load_objects();
-
-	CloudNodeViewer viewer;
-	viewer.view(loaded_model);
-
-	serializer.set_filename("Target");
-	vector<CloudNode> loaded_target=serializer.load_objects();
-	viewer.view(loaded_target);
-
-
-	cout<<"Model"<<endl;
-
-	for(int i=0;i<loaded_model.size();i++)
-	{
-		viewer.view(loaded_model[i]);
-	}
-
-	cout<<"Target"<<endl;
-
-	for(int i=0;i<loaded_target.size();i++)
-	{
-		viewer.view(loaded_target[i]);
-	}
-
 	/*pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_model(new pcl::PointCloud<pcl::PointXYZ>);
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_target(new pcl::PointCloud<pcl::PointXYZ>);
 
@@ -102,35 +74,47 @@ int main(int argc,char**argv)
 
 	cout<<"Extracting the model cylinders!"<<endl;
 
-
-
-	Serializer serializer("Model");
+	Serializer serializer("ModelGraph");
 
 	for(int i=0;i<model_objects.size();i++)
 	{
 		vector<CloudNode> temp_cylinders=s.segment_cylinders(model_objects[i],0.05,0.15,0.04);
-		serializer.save_objects(temp_cylinders);
 		gb.build_graph(model_graph,temp_cylinders);
 	}
+
+	serializer.save_graph(model_graph);
 	gb.scene_graph_info();
 
+	
 
 
-
+	
 	cout<<"Extracting the target cylinders!"<<endl;
 
-	serializer.set_filename("Target");
+
 	for(int i=0;i<target_objects.size();i++)
 	{
 		vector<CloudNode> temp_cylinders=s2.segment_cylinders(target_objects[i],0.05,0.15,0.04);
-		serializer.save_objects(temp_cylinders);
 		gb.build_graph(target_graph,temp_cylinders);
 	}
 	gb.scene_graph_info();
-	
+		
+	serializer.set_filename("TargetGraph");
+	serializer.save_graph(target_graph);
+
+	*/
+	CloudNodeViewer viewer;
+	vector<vector<CloudNode> >model_graph;
+	vector<vector<CloudNode> >target_graph;
+
+	Serializer serializer("ModelGraph");
+	model_graph=serializer.load_graph();
+	serializer.set_filename("TargetGraph");
+	target_graph=serializer.load_graph();
+
 	cout<<"Model!"<<endl;
 	viewer.view_graph_test(model_graph[1]);
-
+	
 	cout<<"Targetter!"<<target_graph.size()<<endl;
 	viewer.view_graph_test(target_graph[0]);
 
