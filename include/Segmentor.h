@@ -71,12 +71,29 @@ public:
 	{
 		this->segment_main_plane(input_cloud);
 	};
+	Segmentor():
+	main_plane(new pcl::PointCloud<pcl::PointXYZ>),
+	cylinder_cloud(new pcl::PointCloud<pcl::PointXYZ>),
+	current_outliers(new pcl::PointCloud<pcl::PointXYZ>),
+	filtered_cloud(new pcl::PointCloud<pcl::PointXYZ>),
+	sphere_cloud(new pcl::PointCloud<pcl::PointXYZ>),
+	main_plane_normals(new pcl::PointCloud<pcl::Normal>),
+	sphere_normals(new pcl::PointCloud<pcl::Normal>),
+	cylinder_normals(new pcl::PointCloud<pcl::Normal>),
+	main_plane_inliers(new pcl::PointIndices),
+	sphere_inliers(new pcl::PointIndices),
+	cylinder_indices(new pcl::PointIndices),
+	main_plane_coefficients(new pcl::ModelCoefficients),
+	sphere_coefficients(new pcl::ModelCoefficients),
+	cylinder_coefficients(new pcl::ModelCoefficients),
+	tree(new pcl::search::KdTree<pcl::PointXYZ>()),
+	sphere_tree(new pcl::search::KdTree<pcl::PointXYZ>()){};
 
 	void segment_main_plane(pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud);
 	void segment_sphere();
 	void segment_cylinder();
 	std::vector<CloudNode> segment_cylinders();
-	std::vector<CloudNode> segment_cylinders(CloudNode node,double distance_thr);
+	std::vector<CloudNode> segment_cylinders(CloudNode node,double min_r,double max_r,double distance_thr);
 
 
 	CloudNode get_main_plane();

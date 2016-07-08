@@ -3,9 +3,10 @@
 
 #include "CloudNode.h"
 
+
 class EuclideanExtractor
 {
 public:
-	std::vector<CloudNode> extract_objects(CloudNode node,int model=0);
+	std::vector<CloudNode> extract_objects(CloudNode node,int model=0,std::string label="Model");
 };
 #endif

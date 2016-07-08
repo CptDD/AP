@@ -7,6 +7,8 @@ std::pair<int,double> GraphMatcher::get_most_similar_for_index(std::vector<Cloud
 		CloudNode query_node)
 {
 	double radius_thr=0.03;
+	//double radius_thr=0.01;
+	//double radius_thr=0.06;
 
 	std::pair<int,double> index(-1,100);
 
@@ -93,6 +95,8 @@ double **GraphMatcher::build_adjacency_matrix(std::vector<CloudNode>graph)
 std::pair<int,double> GraphMatcher::get_most_similar(std::vector<CloudNode> target_graph,CloudNode query_node)
 {
 	double radius_thr=0.03;
+	//double radius_thr=0.08;
+	//double radius_thr=0.02;
 
 	std::pair<int,double> min_index;
 	min_index.first=-1;
@@ -125,7 +129,10 @@ std::pair<int,double> GraphMatcher::get_most_similar(std::vector<CloudNode> targ
 void GraphMatcher::getter(std::vector<CloudNode> target_graph,std::vector<CloudNode> query_graph,int target_ind,int query_ind,
 	std::vector<int> &where_query,std::vector<int> &where_target,std::vector<int>visited_query,std::vector<int>visited_target)
 {
-	double distance_thr=0.035;
+	//double distance_thr=0.04;
+	double distance_thr=0.03;
+	//double distance_thr=0.01;
+	
 	double **adj_target=build_adjacency_matrix(target_graph);
 	double **adj_query=build_adjacency_matrix(query_graph);
 
@@ -195,7 +202,7 @@ void GraphMatcher::search(std::vector<CloudNode> query_graph,bool screenshot)
 {
 	std::cout<<"Searching for the subraph!"<<std::endl;
 		
-	    target_graph=scene_graph[4];
+	    target_graph=scene_graph[1];
 
 		CloudNodeViewer viewer;
 

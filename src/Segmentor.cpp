@@ -215,7 +215,7 @@ std::vector<CloudNode> Segmentor::segment_cylinders()
 	return cylinders;	
 }
 
-std::vector<CloudNode> Segmentor::segment_cylinders(CloudNode node,double distance_thr)
+std::vector<CloudNode> Segmentor::segment_cylinders(CloudNode node,double min_r,double max_r,double distance_thr)
 {
 	std::vector<CloudNode> cylinders;
 
@@ -225,8 +225,13 @@ std::vector<CloudNode> Segmentor::segment_cylinders(CloudNode node,double distan
 
 	CloudNodeViewer v;
 
+	int segmented_cylinder_count=0;
+
 	while(cloud->points.size()>0.2*nr_of_points)
 	{
+		std::stringstream ss;
+		ss<<node.get_description()<<"_seg_cylinder_"<<segmented_cylinder_count;
+
 		std::cout<<cloud->points.size()<<std::endl;
 		normal_estimator.setSearchMethod(tree);
   		normal_estimator.setInputCloud(cloud);
@@ -239,7 +244,7 @@ std::vector<CloudNode> Segmentor::segment_cylinders(CloudNode node,double distan
   		segmentor.setNormalDistanceWeight (0.01);
   		segmentor.setMaxIterations (10000);
   		segmentor.setDistanceThreshold(distance_thr);
-  		segmentor.setRadiusLimits(0.05,0.15);
+  		segmentor.setRadiusLimits(min_r,max_r);
   		segmentor.setInputCloud (cloud);
     	segmentor.setInputNormals (cylinder_normals);
     	segmentor.segment(*cylinder_indices,*cylinder_coefficients);
@@ -252,8 +257,12 @@ std::vector<CloudNode> Segmentor::segment_cylinders(CloudNode node,double distan
 		point_extractor.filter(*temp_cylinder);
 
 		CloudNode temp_node(temp_cylinder);
+		temp_node.set_axis_direction(cylinder_coefficients->values[3],cylinder_coefficients->values[4],cylinder_coefficients->values[5]);
 		temp_node.set_radius(cylinder_coefficients->values[6]);
+		temp_node.set_description(ss.str());
 
+		segmented_cylinder_count++;
+		
 		v.view(CloudNode(cloud),temp_node,temp_node.get_cloud_center());
 
 		cylinders.push_back(temp_node);
@@ -262,6 +271,7 @@ std::vector<CloudNode> Segmentor::segment_cylinders(CloudNode node,double distan
 		point_extractor.setNegative(true);
 		point_extractor.filter(*input_cloud_outliers);
 		cloud.swap(input_cloud_outliers);
+
 
 	}
 	return cylinders;
