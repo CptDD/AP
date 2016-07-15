@@ -7,6 +7,8 @@ std::pair<int,double> GraphMatcher::get_most_similar_for_index(std::vector<Cloud
 		CloudNode query_node)
 {
 	double radius_thr=0.03;
+	double length_thr=0.08;
+
 	//double radius_thr=0.01;
 	//double radius_thr=0.06;
 
@@ -15,9 +17,10 @@ std::pair<int,double> GraphMatcher::get_most_similar_for_index(std::vector<Cloud
 	for(int i=0;i<target_index.size();i++)
 	{
 		double radius_diff=std::abs(query_node.get_radius()-target_graph[target_index[i]].get_radius());
+		double length_diff=std::abs(query_node.get_length()-target_graph[target_index[i]].get_length());
 
-		std::cout<<"Diff diff :"<<radius_diff<<std::endl;
-		if(radius_diff<=radius_thr && radius_diff>=0.0)
+		std::cout<<"Radius diff :"<<radius_diff<<" Length diff :"<<length_diff<<std::endl;
+		if(radius_diff<=radius_thr && length_diff<=length_thr)
 		{
 			std::cout<<"The start node is similar to node :"<<i<<" from the target graph!"<<std::endl;
 
@@ -95,6 +98,8 @@ double **GraphMatcher::build_adjacency_matrix(std::vector<CloudNode>graph)
 std::pair<int,double> GraphMatcher::get_most_similar(std::vector<CloudNode> target_graph,CloudNode query_node)
 {
 	double radius_thr=0.03;
+	double length_thr=0.08;
+
 	//double radius_thr=0.08;
 	//double radius_thr=0.02;
 
@@ -107,9 +112,12 @@ std::pair<int,double> GraphMatcher::get_most_similar(std::vector<CloudNode> targ
 	for(int i=0;i<target_graph.size();i++)
 	{
 		double radius_diff=std::abs(query_node.get_radius()-target_graph[i].get_radius());
-		std::cout<<"Radius diff :"<<radius_diff<<std::endl;
+		double length_diff=std::abs(query_node.get_length()-target_graph[i].get_length());
 
-		if(radius_diff<=radius_thr && radius_diff>=0.0)
+		std::cout<<"Radius diff :"<<radius_diff<<std::endl;
+		std::cout<<"Length diff :"<<length_diff<<std::endl;
+
+		if(radius_diff<=radius_thr && length_diff<=length_thr)
 		{
 			//cout<<"The start node is similar to node :"<<i<<" from the target graph!"<<endl;
 
@@ -131,6 +139,7 @@ void GraphMatcher::getter(std::vector<CloudNode> target_graph,std::vector<CloudN
 {
 	//double distance_thr=0.04;
 	double distance_thr=0.03;
+
 	//double distance_thr=0.01;
 	
 	double **adj_target=build_adjacency_matrix(target_graph);
@@ -151,7 +160,7 @@ void GraphMatcher::getter(std::vector<CloudNode> target_graph,std::vector<CloudN
 
 				std::cout<<"Distance Q :"<<i<<" "<<j<<" "<<distance_diff<<std::endl;
 
-				if(distance_diff>=0.0 && distance_diff<=distance_thr)
+				if(distance_diff<=distance_thr)
 				{
 					//cout<<"Minium distance found for :"<<i<<" "<<j<<" "<<distance_diff<<endl;
 
@@ -230,9 +239,7 @@ void GraphMatcher::search(std::vector<CloudNode> query_graph,bool screenshot)
 			min_index=get_most_similar(target_graph,query_graph[start_index]);
 
 			std::cout<<"Query node :"<<start_index<<" most similar to "<<min_index.first<<std::endl;
-
 			
-
 		}while(min_index.first==-1);
 
 

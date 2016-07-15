@@ -17,6 +17,13 @@ void CloudNode::set_axis_direction(double x,double y,double z)
 	axis_direction.z()=z;
 }
 
+void CloudNode::set_point_axis(double x,double y,double z)
+{
+	point_axis.x()=x;
+	point_axis.y()=y;
+	point_axis.z()=z;
+}
+
 void CloudNode::info_center_point()
 {
 	std::cout<<"===Center Point==="<<std::endl;
@@ -35,6 +42,8 @@ double CloudNode::compute_distance(CloudNode node)
 
     return sqrt(xdiff*xdiff+ydiff*ydiff+zdiff*zdiff);
 }
+
+
 
 
 double CloudNode::compute_distance_eff(CloudNode node)

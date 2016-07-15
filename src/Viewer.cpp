@@ -249,6 +249,24 @@ boost::shared_ptr<pcl::visualization::PCLVisualizer> CloudNodeViewer::visualisat
 		return viewer;
 }
 
+boost::shared_ptr<pcl::visualization::PCLVisualizer> CloudNodeViewer::visualisation_handler(CloudNode node,pcl::PointXYZ min,
+  pcl::PointXYZ max)
+{
+    boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer ("PCL Visualiser"));
+
+    viewer->setBackgroundColor(255,255,255);
+
+    pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> color_handler(node.get_cloud(),0,255,0);
+    viewer->addPointCloud<pcl::PointXYZ>(node.get_cloud(),color_handler,"cloud");
+
+
+    viewer->addArrow(min,max,0,0,0,"liner");
+    viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "cloud");
+
+    return viewer;
+
+}
+
 
 
 
@@ -391,6 +409,29 @@ void CloudNodeViewer::view(CloudNode node,CloudNode node2,Eigen::Vector4f center
     struct tm * now = localtime( & t );
     std::stringstream ss;
     ss<<"Center_"<<asctime(now);
+    viewer->saveScreenshot(ss.str());
+  }
+}
+
+
+void CloudNodeViewer::view_line_test(CloudNode node,pcl::PointXYZ min,pcl::PointXYZ max,bool screenshot)
+{
+  boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer;
+
+  viewer=visualisation_handler(node,min,max);
+
+  while(!viewer->wasStopped())
+  {
+    viewer->spinOnce(100);
+    boost::this_thread::sleep(boost::posix_time::microseconds (100000));
+  }
+
+  if(screenshot)
+  {
+    time_t t=time(0);
+    struct tm *now=localtime(& t);
+    std::stringstream ss;
+    ss<<"Length_estimation"<<asctime(now);
     viewer->saveScreenshot(ss.str());
   }
 }

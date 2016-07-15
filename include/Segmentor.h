@@ -50,6 +50,15 @@ private:
 
 	void filter_cloud(pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud);
 
+	std::pair<pcl::PointXYZ,pcl::PointXYZ> get_segment_heads(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
+	double compute_length(CloudNode node);
+
+	double compute_distance(CloudNode node,pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
+
+
+
 public:
 	Segmentor(pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud):
 	main_plane(new pcl::PointCloud<pcl::PointXYZ>),

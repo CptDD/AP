@@ -17,6 +17,7 @@ private:
 	{
 		ar&radius;
 		ar&visited;
+		ar&length;
 		ar&connected_component_indices;
 		ar&cp.x&cp.y&cp.z;
 		ar&ad.x&ad.y&ad.z;
@@ -34,6 +35,7 @@ private:
 	};
 
 	double radius;
+	double length;
 	bool visited;
 	std::vector<int> connected_component_indices;
 	std::string pcd_filename;
@@ -48,6 +50,7 @@ public:
 		connected_component_indices=cloud_node.get_connected_indices();
 		visited=cloud_node.is_visited();		
 		radius=cloud_node.get_radius();
+		length=cloud_node.get_length();
 
 		Eigen::Vector3f axis_direction=cloud_node.get_axis_direction();
 		ad.x=axis_direction.x();
@@ -64,6 +67,7 @@ public:
 	void set_filename(std::string pcd_filename){this->pcd_filename=pcd_filename;}
 
 	double get_radius(){return this->radius;}
+	double get_length(){return this->length;}
 	bool is_visited(){return this->visited;}
 
 	std::string get_filename(){return this->pcd_filename;}

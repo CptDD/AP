@@ -2,6 +2,7 @@
 #include "Segmentor.h"
 #include "Viewer.h"
 
+#include <cmath>
 
 #include <pcl/ModelCoefficients.h>
 #include <pcl/filters/extract_indices.h>
@@ -112,6 +113,73 @@ void Segmentor::segment_cylinder()
 	point_extractor.filter(*current_outliers);
 
 }	
+
+
+std::pair<pcl::PointXYZ,pcl::PointXYZ> Segmentor::get_segment_heads(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
+{
+
+	std::pair<pcl::PointXYZ,pcl::PointXYZ> heads;
+
+	heads.first=cloud->points[0];
+	heads.second=cloud->points[0];
+
+	for(int i=1;i<cloud->points.size();i++)
+	{
+		if(cloud->points[i].x<heads.first.x)
+		{
+			heads.first=cloud->points[i];
+		}
+
+		if(cloud->points[i].x>heads.second.x)
+		{
+			heads.second=cloud->points[i];
+		}
+	}
+	return heads;
+}
+
+double Segmentor::compute_distance(CloudNode node,pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
+{
+
+	std::pair<pcl::PointXYZ,pcl::PointXYZ> heads=this->get_segment_heads(cloud);
+
+	double xdiff=heads.second.x-heads.first.x;
+	double ydiff=heads.second.y-heads.first.y;
+	double zdiff=heads.second.z-heads.first.z;
+
+	double distance=sqrt(xdiff*xdiff+ydiff*ydiff+zdiff*zdiff);
+
+	CloudNodeViewer viewer;
+	viewer.view_line_test(node,heads.first,heads.second);
+
+	return distance;
+}
+
+double Segmentor::compute_length(CloudNode node)
+{
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+
+	pcl::ModelCoefficients::Ptr cylinder_coefficients(new pcl::ModelCoefficients);
+
+	cylinder_coefficients->values.push_back(node.get_point_axis().x());	
+	cylinder_coefficients->values.push_back(node.get_point_axis().y());
+	cylinder_coefficients->values.push_back(node.get_point_axis().z());	
+	cylinder_coefficients->values.push_back(node.get_axis_direction().x());
+	cylinder_coefficients->values.push_back(node.get_axis_direction().y());
+	cylinder_coefficients->values.push_back(node.get_axis_direction().z());
+
+	pcl::ProjectInliers<pcl::PointXYZ> projections;
+	projections.setModelType(pcl::SACMODEL_LINE);
+	projections.setInputCloud(node.get_cloud());
+	projections.setModelCoefficients(cylinder_coefficients);	
+	projections.filter(*cloud);
+
+	double distance=this->compute_distance(node,cloud);
+
+
+	return distance;
+}
+
 
 
 std::vector<CloudNode> Segmentor::segment_cylinders()
@@ -258,12 +326,15 @@ std::vector<CloudNode> Segmentor::segment_cylinders(CloudNode node,double min_r,
 
 		CloudNode temp_node(temp_cylinder);
 		temp_node.set_axis_direction(cylinder_coefficients->values[3],cylinder_coefficients->values[4],cylinder_coefficients->values[5]);
+		temp_node.set_point_axis(cylinder_coefficients->values[0],cylinder_coefficients->values[1],cylinder_coefficients->values[2]);
 		temp_node.set_radius(cylinder_coefficients->values[6]);
 		temp_node.set_description(ss.str());
+		temp_node.set_length(this->compute_length(temp_node));
+
 
 		segmented_cylinder_count++;
 		
-		v.view(CloudNode(cloud),temp_node,temp_node.get_cloud_center());
+		//v.view(CloudNode(cloud),temp_node,temp_node.get_cloud_center());
 
 		cylinders.push_back(temp_node);
 

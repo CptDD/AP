@@ -19,6 +19,9 @@ class CloudNodeViewer
 		boost::shared_ptr<pcl::visualization::PCLVisualizer> visualisation_handler(CloudNode node,
 		CloudNode node2,Eigen::Vector4f center);
 
+		boost::shared_ptr<pcl::visualization::PCLVisualizer> visualisation_handler(CloudNode node,pcl::PointXYZ min,
+			pcl::PointXYZ max);
+
 
 	public:
 		void view(CloudNode node,bool screenshot=false);
@@ -28,6 +31,8 @@ class CloudNodeViewer
 		void view(std::vector<CloudNode> target,std::vector<CloudNode> query, std::vector<std::pair<int,int> >similars,bool screenshot=false);
 		void view_graph(std::vector<CloudNode> graph,bool screenshot=false);
 		void view_graph_test(std::vector<CloudNode> graph,bool screenshot=false);
+
+		void view_line_test(CloudNode node,pcl::PointXYZ min,pcl::PointXYZ max,bool screenshot=false);
 
 };
 #endif

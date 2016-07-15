@@ -25,6 +25,8 @@ Eigen/Geometry
 -
 pcl/registration/transformation_estimation_svd.h
 -
+pcl/common/common.h
+-
 fstream
 -
 boost/archive/text_oarchive.hpp
