@@ -1,6 +1,9 @@
 #include "CloudNode.h"
 #include "GraphSearcher.h"
 #include "Viewer.h"
+#include "ProbComp.h"
+
+#define MAX_REPETITIONS 3
 
 
 std::pair<int,double> GraphMatcher::get_most_similar_for_index(std::vector<CloudNode> target_graph,std::vector<int> target_index,
@@ -207,7 +210,7 @@ void GraphMatcher::getter(std::vector<CloudNode> target_graph,std::vector<CloudN
 	delete [] adj_target;
 }
 
-void GraphMatcher::search(std::vector<CloudNode> query_graph,bool screenshot)
+std::vector<std::pair<int,int> > GraphMatcher::search(std::vector<CloudNode> query_graph,bool screenshot)
 {
 	std::cout<<"Searching for the subraph!"<<std::endl;
 		
@@ -310,4 +313,136 @@ void GraphMatcher::search(std::vector<CloudNode> query_graph,bool screenshot)
 		}
 		
 		viewer.view(target_graph,query_graph,similars,screenshot);
+
+		return similars;
+
+}
+
+
+
+void GraphMatcher::search(std::vector<CloudNode> query_graph,int g)
+{
+	std::cout<<"We are here to query some node!"<<std::endl;
+	std::cout<<"The query graph has :"<<query_graph.size()<<" components!"<<std::endl;	
+	std::cout<<"Scene--model graph has :"<<this->scene_graph.size()<<" components!"<<std::endl;
+
+	CloudNodeViewer viewer;
+	ProbComp prob_comp;
+
+	std::vector<double> probabilities;
+
+	for(int i=0;i<scene_graph.size();i++)
+	{
+		target_graph.clear();
+		target_graph=scene_graph[i];
+
+		int start_index;
+		std::vector<CloudNode> similar_nodes;
+		std::pair<int,double> min_index;
+
+		std::vector<int> visited_query;
+		std::vector<int> visited_target;
+
+		std::vector<int> where_query;
+		std::vector<int> where_target;
+		std::vector<std::pair<int,int> >similars;
+
+		int dead_end=0;
+		bool go=true;
+
+		do
+		{	
+			start_index=rand()%query_graph.size();
+			std::cout<<"Random node index is :"<<start_index<<std::endl;
+
+			min_index=get_most_similar(target_graph,query_graph[start_index]);
+			std::cout<<"Query node :"<<start_index<<" most similar to "<<min_index.first<<std::endl;
+
+			if(min_index.first==-1)
+			{
+				dead_end++;
+			}else
+			{
+				go=false;
+			}
+
+		}while(dead_end<MAX_REPETITIONS && go);
+
+		if(min_index.first!=-1)
+		{
+			visited_query.push_back(start_index);
+			visited_target.push_back(min_index.first);
+			query_graph[start_index].set_visited();
+			target_graph[min_index.first].set_visited();
+
+			similars.push_back(std::pair<int,int>(min_index.first,start_index));
+	
+			similar_nodes.push_back(target_graph[min_index.first]);
+
+			viewer.view(query_graph[start_index]);
+			viewer.view(target_graph[min_index.first]);
+
+			/*
+			 * Where to go next from current nodes, provided that distance threshold is respected
+		 	*/
+			getter(target_graph,query_graph,min_index.first,start_index,where_query,where_target,visited_query,visited_target);
+
+			while(!where_query.empty())
+			{
+
+				int start_index=where_query.front();
+				where_query.erase(where_query.begin());
+
+				visited_query.push_back(start_index);
+				query_graph[start_index].set_visited();
+
+				min_index=get_most_similar_for_index(target_graph,where_target,query_graph[start_index]);
+
+				if(min_index.first!=-1)
+				{
+
+					int target_index=where_target[min_index.first];
+					where_target.erase(where_target.begin()+min_index.first);
+
+					std::cout<<"Query node :"<<start_index<<" most similar to "<<target_index<<std::endl;
+
+					target_graph[target_index].set_visited();
+					visited_target.push_back(target_index);
+					similar_nodes.push_back(target_graph[target_index]);
+
+					similars.push_back(std::pair<int,int>(target_index,start_index));
+			
+
+					viewer.view(query_graph[start_index]);
+					viewer.view(target_graph[target_index]);
+
+					/*
+				 	* Update where to go next!
+				 	*/
+				 	getter(target_graph,query_graph,target_index,start_index,where_target,where_query,visited_query,visited_target);
+
+				}
+
+
+			}
+		
+			std::cout<<"Similar size :"<<similar_nodes.size()<<std::endl;
+			std::cout<<"The similar pairs are :"<<std::endl;
+
+			for(int i=0;i<similars.size();i++)
+			{
+				std::cout<<"Target :"<<similars[i].first<<" with Query :"<<similars[i].second<<std::endl;
+			}
+		
+			viewer.view(target_graph,query_graph,similars);
+		}
+		probabilities.push_back(prob_comp.compute_probability(similars,target_graph.size()));
+	}
+	std::cout<<"Probabilities are :"<<std::endl;
+	for(int i=0;i<probabilities.size();i++)
+	{
+		std::cout<<probabilities[i]<<" ";
+	}
+	std::cout<<std::endl;
+
 }

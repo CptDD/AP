@@ -23,6 +23,7 @@
 #include "GraphSearcher.h"
 #include "Cloud2Serialize.h"
 #include "Serializer.h"
+#include "ProbComp.h"
 
 
 using namespace std;
@@ -34,7 +35,6 @@ vector<pcl::PointXYZ> project_cloud(CloudNode node);
 
 int main(int argc,char**argv)
 {
-
 
 
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_model(new pcl::PointCloud<pcl::PointXYZ>);
@@ -87,6 +87,9 @@ int main(int argc,char**argv)
 
 	//Serializer serializer("ModelGraph");
 
+	
+
+
 	for(int i=0;i<model_objects.size();i++)
 	{
 		vector<CloudNode> temp_cylinders=s.segment_cylinders(model_objects[i],0.05,0.15,0.04);
@@ -107,6 +110,9 @@ int main(int argc,char**argv)
 	}
 	gb.scene_graph_info();
 		
+	cout<<"Showing the objects to be searched!"<<endl;
+	viewer.view(target_graph[2]);
+
 	//serializer.set_filename("TargetGraph");
 	//serializer.save_graph(target_graph);
 
@@ -118,19 +124,24 @@ int main(int argc,char**argv)
 	//cout<<"Targetter!"<<target_graph.size()<<endl;
 	//viewer.view_graph_test(target_graph[0]);
 
-	/*GraphMatcher matcher(model_graph);
-	matcher.search(target_graph[0]);*/
+	GraphMatcher matcher(model_graph);
+	matcher.search(target_graph[2],1);
+	//vector<pair<int,int> >similars=matcher.search(target_graph[0]);
 
-	Eigen::Affine3f transform_matrix=compute_transform_matrix(model_graph[1][0].get_axis_direction(),target_graph[0][0].get_axis_direction());
+	//ProbComp prob_comp;
+	//prob_comp.compute_probability(similars,target_graph[1].size());
+
+
+	//Eigen::Affine3f transform_matrix=compute_transform_matrix(model_graph[1][0].get_axis_direction(),target_graph[0][0].get_axis_direction());
 	
 	/*Eigen::Affine3f transform_matrix_2=compute_transform_matrix_v2(target_graph[4][0].get_axis_direction(),model_graph[4][0].get_axis_direction());*/
 
-	CloudNode test_node=target_graph[0][0];
-	test_node.transform_cloud(transform_matrix.inverse());
+	//CloudNode test_node=target_graph[0][0];
+	//test_node.transform_cloud(transform_matrix.inverse());
 
 	//model_graph[1][0].transform_cloud(transform_matrix);
 
-	viewer.view(test_node,model_graph[1][0]);	
+	//viewer.view(test_node,model_graph[1][0]);	
 
 	/*
 	pcl::registration::TransformationEstimationSVD<pcl::PointXYZ,pcl::PointXYZ> svd;
@@ -139,14 +150,14 @@ int main(int argc,char**argv)
 	svd.estimateRigidTransformation(*model_graph[4][0].get_cloud(),*target_graph[4][0].get_cloud(),transformation);*/
 
 
-	for(int i=0;i<4;i++)
+	/*for(int i=0;i<4;i++)
 	{
 		for(int j=0;j<4;j++)
 		{
 			cout<<transform_matrix(i,j)<<" ";
 		}
 		cout<<endl;
-	}
+	}*/
 
 	return 0;
 }
