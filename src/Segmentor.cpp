@@ -330,6 +330,7 @@ std::vector<CloudNode> Segmentor::segment_cylinders(CloudNode node,double min_r,
 		temp_node.set_radius(cylinder_coefficients->values[6]);
 		temp_node.set_description(ss.str());
 		temp_node.set_length(this->compute_length(temp_node));
+		temp_node.compute_volume(true);
 
 
 		segmented_cylinder_count++;

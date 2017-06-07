@@ -4,6 +4,7 @@
 #include <pcl/common/transforms.h>
 #include <cmath>
 
+
 void CloudNode::compute_cloud_center()
 {
 	pcl::compute3DCentroid(*this->cloud_points,center_point);
@@ -70,6 +71,7 @@ bool CloudNode::is_index_present(int index)
 }
 
 
+
 void CloudNode::transform_cloud(Eigen::Affine3f transform_matrix)
 {
 	std::cout<<"Transforming!"<<std::endl;
@@ -83,4 +85,22 @@ void CloudNode::transform_cloud(Eigen::Affine3f transform_matrix)
 	}
 
 	pcl::transformPointCloud(*cloud_points,*cloud_points,transform_matrix);
+}
+
+
+/*
+ * Volume=pi*r^2*lenght
+ *
+ */
+double CloudNode::compute_volume(bool set)
+{
+	double volume=M_PI*this->get_radius()*this->get_radius()*this->get_length();
+
+	if(set)
+	{
+		this->set_volume(volume);
+	}
+
+	return volume;
+
 }

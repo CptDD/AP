@@ -17,6 +17,7 @@ private:
 
 	double radius;
 	double length;
+	double volume;
 	bool visited;
 
 	void compute_cloud_center();
@@ -26,11 +27,13 @@ public:
 	CloudNode():
 	radius(0.0),
 	length(0.0),
+	volume(0.0),
 	visited(false){}
 
 	CloudNode(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud):
 	radius(0.0),
 	length(0.0),
+	volume(0.0),
 	visited(false)
 	{
 		this->cloud_points=cloud;
@@ -54,6 +57,8 @@ public:
 	void set_description(std::string node_description){this->node_description=node_description;}
 	void set_point_axis(double x,double y,double z);
 	void set_length(double length){this->length=length;}
+	void set_volume(double volume){this->volume=volume;}
+	double compute_volume(bool set=false);
 	
 
 	Eigen::Vector4f get_cloud_center(){return this->center_point;}
@@ -70,6 +75,7 @@ public:
 	bool is_index_present(int index);
 	bool is_visited(){return visited;}
 	double get_length(){return length;}
+	double get_volume(){return volume;}
 };
 
 #endif
