@@ -35,5 +35,7 @@ public:
 
 	std::vector<std::pair<int,int> > search(std::vector<CloudNode> query_graph,bool screenshot=false);
 	void search(std::vector<CloudNode> query_graph,int g);
+
+	void show_level(std::vector<CloudNode> nodes);
 };
 #endif

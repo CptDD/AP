@@ -331,10 +331,14 @@ void GraphMatcher::search(std::vector<CloudNode> query_graph,int g)
 
 	std::vector<double> probabilities;
 
-	for(int i=0;i<scene_graph.size();i++)
+	for(int i=0;i<1;i++)
 	{
+		i=0;
 		target_graph.clear();
 		target_graph=scene_graph[i];
+
+		std::cout<<"The "<<std::endl;
+		viewer.view(target_graph);
 
 		int start_index;
 		std::vector<CloudNode> similar_nodes;
@@ -436,6 +440,10 @@ void GraphMatcher::search(std::vector<CloudNode> query_graph,int g)
 		
 			viewer.view(target_graph,query_graph,similars);
 		}
+
+		prob_comp.set_model_nodes(target_graph);
+		prob_comp.compute_level_probability(similars,target_graph.size());
+
 		probabilities.push_back(prob_comp.compute_probability(similars,target_graph.size()));
 	}
 	std::cout<<"Probabilities are :"<<std::endl;
@@ -445,4 +453,20 @@ void GraphMatcher::search(std::vector<CloudNode> query_graph,int g)
 	}
 	std::cout<<std::endl;
 
+}
+
+
+void GraphMatcher::show_level(std::vector<CloudNode> nodes)
+{
+	for(int i=0;i<nodes.size();i++)
+	{
+		std::cout<<i<<"-->";
+		std::vector<int> connected=nodes[i].get_connected_indices();
+
+		for(int j=0;j<connected.size();j++)
+		{
+			std::cout<<connected[j]<<" ";
+		}
+		std::cout<<std::endl;
+	}
 }

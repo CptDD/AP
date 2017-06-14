@@ -87,12 +87,13 @@ int main(int argc,char**argv)
 
 	//Serializer serializer("ModelGraph");
 
-	for(int i=0;i<model_objects.size();i++)
+	/*for(int i=0;i<model_objects.size();i++)
 	{
 		vector<CloudNode> temp_cylinders=s.segment_cylinders(model_objects[i],0.05,0.15,0.04);
 		gb.build_graph_volume(model_graph,temp_cylinders);
 
-	}
+	}*/
+
 
 
 	for(int i=0;i<model_objects.size();i++)
@@ -101,12 +102,13 @@ int main(int argc,char**argv)
 		gb.build_graph(model_graph,temp_cylinders);
 	}
 
+
+
 	//serializer.save_graph(model_graph);
 	gb.scene_graph_info();
 
-	cout<<"The segmented cylinders"<<endl;
 
-	/*cout<<"Extracting the target cylinders!"<<endl;
+	cout<<"Extracting the target cylinders!"<<endl;
 
 
 	for(int i=0;i<target_objects.size();i++)
@@ -115,9 +117,6 @@ int main(int argc,char**argv)
 		gb.build_graph(target_graph,temp_cylinders);
 	}
 	gb.scene_graph_info();
-		
-	cout<<"Showing the objects to be searched!"<<endl;
-	viewer.view(target_graph[2]);
 
 	//serializer.set_filename("TargetGraph");
 	//serializer.save_graph(target_graph);
@@ -130,12 +129,17 @@ int main(int argc,char**argv)
 	//cout<<"Targetter!"<<target_graph.size()<<endl;
 	//viewer.view_graph_test(target_graph[0]);
 
+
+	cout<<"The query object is "<<endl;
+	viewer.view(target_graph[1]);
+
 	GraphMatcher matcher(model_graph);
-	matcher.search(target_graph[2],1);
-	//vector<pair<int,int> >similars=matcher.search(target_graph[0]);
+	matcher.search(target_graph[1],1);
+	//vector<pair<int,int> >similars=matcher.search(target_graph[2],1);
 
 	//ProbComp prob_comp;
 	//prob_comp.compute_probability(similars,target_graph[1].size());
+	//prob_comp.compute_level_probability(similars,target_graph[1].size());
 
 
 	//Eigen::Affine3f transform_matrix=compute_transform_matrix(model_graph[1][0].get_axis_direction(),target_graph[0][0].get_axis_direction());
