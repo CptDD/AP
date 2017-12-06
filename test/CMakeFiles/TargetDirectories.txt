@@ -1,0 +1,5 @@
+/home/cptd/test/CMakeFiles/pcd_recognition.dir
+/home/cptd/test/CMakeFiles/edit_cache.dir
+/home/cptd/test/CMakeFiles/pcd_ply.dir
+/home/cptd/test/CMakeFiles/rebuild_cache.dir
+/home/cptd/test/CMakeFiles/compute_rsd.dir
